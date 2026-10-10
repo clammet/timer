@@ -88,6 +88,25 @@ function Glyph({ name, size = 24 }: { name: IconName; size?: number }) {
   const Icon = icons[name];
   return <Icon size={size} strokeWidth={1.8} />;
 }
+function intervalPanelStyle(color: string): CSSProperties {
+  const luminance = (hex: string) => {
+    const channels = [1, 3, 5].map((offset) => {
+      const value = parseInt(hex.slice(offset, offset + 2), 16) / 255;
+      return value <= 0.04045
+        ? value / 12.92
+        : ((value + 0.055) / 1.055) ** 2.4;
+    });
+    return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+  };
+  const background = luminance(color);
+  const dark = "#141918";
+  const darkContrast = (background + 0.05) / (luminance(dark) + 0.05);
+  const lightContrast = 1.05 / (background + 0.05);
+  return {
+    backgroundColor: color,
+    color: darkContrast >= lightContrast ? dark : "#ffffff",
+  };
+}
 function IconButton({
   label,
   children,
@@ -1111,25 +1130,21 @@ export default function App() {
           <div className="overall-progress">
             <span style={{ width: `${(elapsed / total) * 100}%` }} />
           </div>
-          <section className="current-interval">
-            <div className="player-status">
-              <span className={running ? "status-dot live" : "status-dot"} />
-              {complete
-                ? "COMPLETE"
-                : running
-                  ? "IN PROGRESS"
-                  : elapsed === 0
-                    ? "READY"
-                    : "PAUSED"}
+          <section
+            className="current-interval"
+            aria-label="Current interval"
+            style={intervalPanelStyle(current?.interval.color ?? colors[2])}
+          >
+            <div className="current-heading">
+              <span className="current-icon">
+                {current ? (
+                  <Glyph name={current.interval.icon} size={36} />
+                ) : (
+                  <Check size={36} />
+                )}
+              </span>
+              <h1>{current?.interval.name ?? "Complete"}</h1>
             </div>
-            <div className="current-icon">
-              {current ? (
-                <Glyph name={current.interval.icon} size={46} />
-              ) : (
-                <Check size={46} />
-              )}
-            </div>
-            <h1>{current?.interval.name ?? "Complete"}</h1>
             <div
               className="countdown"
               style={{
@@ -1140,38 +1155,19 @@ export default function App() {
             >
               {formatTime(current?.remaining ?? 0)}
             </div>
-            <div className="player-counts">
-              <span>
-                <Repeat2 size={15} />
-                Cycle {current?.cycle ?? session.timer.cycles}
-                <b>/ {session.timer.cycles}</b>
-              </span>
-              {current && (
-                <span>
-                  {current.round.name}
-                  <b>
-                    {current.repeat} / {current.round.repeat}
-                  </b>
-                </span>
-              )}
-            </div>
           </section>
-          <section className="next-interval">
-            <span className="eyebrow">UP NEXT</span>
+          <section
+            className="next-interval"
+            aria-label="Next interval"
+            style={next ? intervalPanelStyle(next.interval.color) : undefined}
+          >
             {next ? (
               <div className="next-content">
-                <span
-                  className="next-icon"
-                  style={{
-                    color: next.interval.color,
-                    background: `${next.interval.color}22`,
-                  }}
-                >
+                <span className="next-icon">
                   <Glyph name={next.interval.icon} size={28} />
                 </span>
                 <div>
                   <h2>{next.interval.name}</h2>
-                  <span className="muted">{next.round.name}</span>
                 </div>
                 <span className="next-time">
                   {formatTime(next.interval.duration * 1000)}
