@@ -22,7 +22,7 @@ Create a custom timer or select a preset, edit its rounds and intervals, and sav
 - **Tabata:** prepare 10 seconds, work 20 seconds, rest 60 seconds; 10 round repeats, one cycle.
 - **Rounds:** prepare 10 seconds, work 10 seconds, rest 20 seconds; one round repeat, one cycle.
 
-Each interval has a name, duration, colour, Lucide icon, optional looping custom audio and a transition sound. Beeps is three 150 ms beeps with one second of silence between them. Other transitions are Bell, Chime, Rise, Click and None.
+Each interval has a name, duration, colour, Lucide icon, optional looping custom audio and a transition sound. The upcoming interval’s transition sound plays at the end of the preceding interval and finishes at the boundary. There is no transition cue at timer start or after the final interval. Pausing, restarting and skipping cancel pending cues; resuming schedules only notes that have not yet started. Short intervals omit notes that do not fit. Beeps is three 150 ms beeps with one second of silence between them. Other transitions are Bell, Chime, Rise, Click and None.
 
 Settings, timers, the active session and uploaded media are stored in local storage on this browser. Audio uploads are limited to 2 MB each, and the browser's storage quota also applies. Quota errors leave existing saved data intact. Uploaded media is checked for playback support before saving. Deleting a sound removes its timer references.
 

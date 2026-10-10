@@ -1,10 +1,19 @@
 import type { Transition } from "./engine";
 import type { Settings, Sound } from "./storage";
+const transitionLengths: Record<Transition, number> = {
+  none: 0,
+  beeps: 2.45,
+  bell: 1.2,
+  chime: 1.06,
+  rise: 0.6,
+  click: 0.05,
+};
 export class TimerAudio {
   private context: AudioContext | null = null;
   private tones: OscillatorNode[] = [];
   private media: HTMLAudioElement | null = null;
   private preview: HTMLAudioElement | null = null;
+  private audition: TimerAudio | null = null;
   onError: (() => void) | null = null;
   unlock() {
     this.context ??= new AudioContext();
@@ -42,24 +51,53 @@ export class TimerAudio {
       gain.disconnect();
     };
   }
-  transition(sound: Transition, settings: Settings) {
+  transition(sound: Transition, settings: Settings, remainingMs?: number) {
     this.stopTones();
     if (settings.muted || !settings.volume || sound === "none") return;
     const now = this.context?.currentTime;
     if (now === undefined) return;
     const v = settings.volume;
+    // Anchor the cue's end to the boundary. Expired notes are omitted on resume
+    // and in intervals too short to hold the full cue.
+    const offset =
+      remainingMs === undefined
+        ? 0
+        : remainingMs / 1000 - transitionLengths[sound];
+    const play = (
+      frequency: number,
+      delay: number,
+      duration: number,
+      volume = v,
+      type: OscillatorType = "sine",
+      endFrequency?: number,
+    ) => {
+      const start = offset + delay;
+      if (start < -0.000001) return;
+      this.tone(
+        frequency,
+        now + Math.max(0, start),
+        duration,
+        volume,
+        type,
+        endFrequency,
+      );
+    };
     if (sound === "beeps")
-      [0, 1.15, 2.3].forEach((delay) => this.tone(880, now + delay, 0.15, v));
+      [0, 1.15, 2.3].forEach((delay) => play(880, delay, 0.15));
     if (sound === "bell") {
-      this.tone(660, now, 1.2, v);
-      this.tone(1320, now, 0.6, v * 0.4);
+      play(660, 0, 1.2);
+      play(1320, 0, 0.6, v * 0.4);
     }
     if (sound === "chime")
-      [523.25, 659.25, 783.99].forEach((f, i) =>
-        this.tone(f, now + i * 0.18, 0.7, v),
-      );
-    if (sound === "rise") this.tone(330, now, 0.6, v, "sine", 990);
-    if (sound === "click") this.tone(1200, now, 0.05, v, "triangle");
+      [523.25, 659.25, 783.99].forEach((f, i) => play(f, i * 0.18, 0.7));
+    if (sound === "rise") play(330, 0, 0.6, v, "sine", 990);
+    if (sound === "click") play(1200, 0, 0.05, v, "triangle");
+  }
+  previewTransition(sound: Transition, settings: Settings) {
+    this.audition ??= new TimerAudio();
+    this.audition.onError = this.onError;
+    this.audition.unlock();
+    this.audition.transition(sound, settings);
   }
   interval(sound: Sound | undefined, settings: Settings, offset = 0) {
     this.stopMedia();
@@ -83,6 +121,7 @@ export class TimerAudio {
   stopPreview() {
     this.preview?.pause();
     this.preview = null;
+    this.audition?.stop();
   }
   stopTones() {
     for (const tone of this.tones) {

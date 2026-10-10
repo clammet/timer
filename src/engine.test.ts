@@ -4,6 +4,7 @@ import {
   preset,
   totalDuration,
   positionAt,
+  transitionCueAt,
   elapsedAt,
   formatTime,
   interval,
@@ -78,4 +79,35 @@ test("countdown rounds partial seconds up and formats hours", () => {
   assert.equal(formatTime(60001), "01:01");
   assert.equal(formatTime(3600000), "1:00:00");
   assert.equal(formatTime(0), "00:00");
+});
+
+test("transition cues use the upcoming interval's selection across repeats and cycles", () => {
+  const timer = preset("Rounds");
+  timer.rounds[0].intervals[0].transition = "click";
+  timer.rounds[0].intervals[1].transition = "bell";
+  timer.rounds[0].intervals[2].transition = "none";
+  timer.rounds[0].repeat = 2;
+  timer.cycles = 2;
+  assert.deepEqual(transitionCueAt(timer, 0), {
+    sound: "bell",
+    remaining: 10000,
+  });
+  assert.deepEqual(transitionCueAt(timer, 9000), {
+    sound: "bell",
+    remaining: 1000,
+  });
+  assert.deepEqual(transitionCueAt(timer, 10000), {
+    sound: "none",
+    remaining: 10000,
+  });
+  assert.deepEqual(transitionCueAt(timer, 39000), {
+    sound: "click",
+    remaining: 1000,
+  });
+  assert.deepEqual(transitionCueAt(timer, 79000), {
+    sound: "click",
+    remaining: 1000,
+  });
+  assert.equal(transitionCueAt(timer, 159000), null);
+  assert.equal(transitionCueAt(timer, 160000), null);
 });

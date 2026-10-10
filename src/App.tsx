@@ -50,6 +50,7 @@ import {
   iconNames,
   interval,
   positionAt,
+  transitionCueAt,
   preset,
   roundDuration,
   totalDuration,
@@ -194,7 +195,6 @@ export default function App() {
   } | null>(null);
   const [uploading, setUploading] = useState(false);
   const audio = useRef(new TimerAudio()).current;
-  const soundKey = useRef("");
   const fileInput = useRef<HTMLInputElement>(null);
   const session = store.session;
   const elapsed = session ? elapsedAt(session, now) : 0;
@@ -243,21 +243,23 @@ export default function App() {
     }
   }, [complete, running]); // Completion is persisted once, rather than on each tick.
   useEffect(() => {
-    if (!running || !current || store.settings.muted) {
+    if (!running || !session || !current || store.settings.muted) {
       audio.stopMedia();
       audio.stopTones();
       return;
     }
-    if (soundKey.current !== current.key) {
-      audio.transition(current.interval.transition, store.settings);
-      soundKey.current = current.key;
-    }
+    const actualElapsed = elapsedAt(session);
+    const cue = transitionCueAt(session.timer, actualElapsed);
+    audio.transition(cue?.sound ?? "none", store.settings, cue?.remaining);
     audio.interval(
       store.sounds.find((s) => s.id === current.interval.sound),
       store.settings,
-      elapsed - current.start,
+      actualElapsed - current.start,
     );
-    return () => audio.stopMedia();
+    return () => {
+      audio.stopMedia();
+      audio.stopTones();
+    };
   }, [
     running,
     current?.key,
@@ -366,7 +368,6 @@ export default function App() {
     const start = () => {
       audio.unlock();
       audio.stop();
-      soundKey.current = "";
       const timestamp = Date.now();
       setNow(timestamp);
       if (
@@ -409,7 +410,6 @@ export default function App() {
     if (!session) return;
     audio.unlock();
     audio.stop();
-    soundKey.current = "";
     setNow(Date.now());
     update({
       session: {
@@ -816,7 +816,7 @@ export default function App() {
                                 label="Preview transition"
                                 onClick={() => {
                                   audio.unlock();
-                                  audio.transition(
+                                  audio.previewTransition(
                                     item.transition,
                                     store.settings,
                                   );
@@ -927,9 +927,7 @@ export default function App() {
         <main className="home page">
           <div className="page-heading home-heading">
             <div>
-              <h1>
-                Saved timers
-              </h1>
+              <h1>Saved timers</h1>
             </div>
             <button
               className="button primary new-timer"
@@ -1391,7 +1389,7 @@ export default function App() {
                     key={t}
                     onClick={() => {
                       audio.unlock();
-                      audio.transition(t, store.settings);
+                      audio.previewTransition(t, store.settings);
                     }}
                   >
                     <Bell size={18} />

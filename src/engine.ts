@@ -161,6 +161,18 @@ export function positionAt(timer: Timer, elapsed: number): Position | null {
   }
   return null;
 }
+// The upcoming interval's cue belongs to the end of the current interval.
+export function transitionCueAt(
+  timer: Timer,
+  elapsed: number,
+): { sound: Transition; remaining: number } | null {
+  const current = positionAt(timer, elapsed);
+  if (!current) return null;
+  const next = positionAt(timer, current.end);
+  return next
+    ? { sound: next.interval.transition, remaining: current.remaining }
+    : null;
+}
 export function formatTime(ms: number): string {
   const seconds = Math.max(0, Math.ceil(ms / 1000));
   const h = Math.floor(seconds / 3600);
