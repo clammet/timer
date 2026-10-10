@@ -123,7 +123,6 @@ h3 {
 .brand-dot {
   color: var(--accent);
 }
-.brand-label,
 .eyebrow,
 .micro-label {
   font-size: 10px;
@@ -279,7 +278,7 @@ h3 {
 .preset-1 .preset-bars i {
   background: #6c8f63;
 }
-.saved-heading {
+.create-heading {
   margin-top: 40px;
 }
 .count-badge {
@@ -375,7 +374,7 @@ h3 {
   border: 1px dashed #cdd2c6;
   border-radius: 22px;
   padding: 38px 20px;
-  min-height: 245px;
+  min-height: 150px;
 }
 .empty-state strong {
   font-family: Manrope, sans-serif;
@@ -398,39 +397,13 @@ h3 {
   bottom: 6px;
   background: #e8ece1;
 }
-.empty-action {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--accent);
-  margin-top: 3px;
-}
+
 .muted {
   font-size: 12px;
   color: var(--muted);
 }
-.separator {
-  color: #c1c7ba;
-  margin: 0 6px;
-}
-.home-footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin: 38px 0 4px;
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 1.9px;
-  color: #8b9385;
-}
-.tiny-line {
-  width: 28px;
-  height: 1px;
-  background: #ced3c7;
-}
+
+
 .bottom-nav {
   position: fixed;
   z-index: 20;
@@ -923,20 +896,7 @@ legend {
   flex: 1;
   text-align: left;
 }
-.settings-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 30px 0;
-  color: var(--muted);
-}
-.brand.small {
-  font-size: 22px;
-}
-.settings-footer > span:last-child {
-  font-size: 9px;
-  letter-spacing: 1.5px;
-}
+
 .player-app {
   padding-bottom: 84px;
   max-width: 700px;
@@ -1216,10 +1176,7 @@ legend {
   .brand-mark svg {
     width: 22px;
   }
-  .brand-label {
-    font-size: 8px;
-    letter-spacing: 1.5px;
-  }
+
   .page {
     padding: 0 24px;
   }
@@ -1296,7 +1253,7 @@ legend {
   .preset-bars i:nth-child(3) {
     height: 16px;
   }
-  .saved-heading {
+  .create-heading {
     margin-top: 31px;
   }
   .saved-timers {
@@ -1315,14 +1272,9 @@ legend {
   .card-bottom {
     margin-top: 19px;
   }
-  .home-footer {
-    font-size: 7px;
-    letter-spacing: 1.4px;
-    gap: 12px;
-    margin-top: 30px;
-  }
+
   .empty-state {
-    min-height: 240px;
+    min-height: 140px;
   }
   .bottom-nav {
     padding: 8px 20px calc(10px + env(safe-area-inset-bottom));
@@ -1499,9 +1451,7 @@ legend {
   .toast {
     bottom: 94px;
   }
-  .settings-footer > span:last-child {
-    font-size: 8px;
-  }
+
 }
 @media (max-width: 360px) {
   .page {

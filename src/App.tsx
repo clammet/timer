@@ -528,7 +528,6 @@ export default function App() {
             </span>
             tempo<span className="brand-dot">.</span>
           </a>
-          <span className="brand-label">INTERVAL STUDIO</span>
         </header>
       )}
       {editor ? (
@@ -545,7 +544,6 @@ export default function App() {
                 <ArrowLeft />
               </IconButton>
               <div>
-                <span className="eyebrow">TIMER BUILDER</span>
                 <h1>
                   {store.timers.some((t) => t.id === editor.id)
                     ? "Edit timer"
@@ -929,9 +927,8 @@ export default function App() {
         <main className="home page">
           <div className="page-heading home-heading">
             <div>
-              <span className="eyebrow">AT YOUR OWN PACE</span>
               <h1>
-                Your timers<span className="accent">.</span>
+                Saved timers
               </h1>
             </div>
             <button
@@ -942,41 +939,6 @@ export default function App() {
               <Plus size={22} />
               <span>New timer</span>
             </button>
-          </div>
-          <div className="section-heading">
-            <h2>Quick start</h2>
-            <span className="micro-label">PRESETS</span>
-          </div>
-          <div className="presets">
-            {(["Tabata", "Rounds"] as const).map((name, i) => (
-              <button
-                className={`preset-card preset-${i}`}
-                key={name}
-                onClick={() => openEditor(preset(name))}
-              >
-                <span className="preset-top">
-                  <span className="preset-symbol">
-                    {i === 0 ? <Zap size={27} /> : <Repeat2 size={27} />}
-                  </span>
-                  <ArrowRight size={23} />
-                </span>
-                <span className="preset-name">{name}</span>
-                <span className="preset-meta">
-                  {i === 0 ? "10 repeats" : "1 round"}
-                  <span>·</span>
-                  {formatTime(totalDuration(preset(name)))}
-                </span>
-                <span className="preset-bars">
-                  <i />
-                  <i />
-                  <i />
-                </span>
-              </button>
-            ))}
-          </div>
-          <div className="section-heading saved-heading">
-            <h2>Saved timers</h2>
-            <span className="count-badge">{store.timers.length}</span>
           </div>
           {store.timers.length ? (
             <div className="saved-timers">
@@ -1079,20 +1041,38 @@ export default function App() {
                 <TimerIcon size={36} strokeWidth={1.4} />
                 <Plus size={16} />
               </span>
-              <strong>Your first timer</strong>
-              <span className="muted">
-                Create <span className="separator">/</span> Customise{" "}
-                <span className="separator">/</span> Repeat
-              </span>
-              <span className="empty-action">
-                New timer <ArrowRight size={17} />
-              </span>
+              <strong>New timer</strong>
             </button>
           )}
-          <div className="home-footer">
-            <span className="tiny-line" />
-            <span>YOUR RHYTHM. YOUR RULES.</span>
-            <span className="tiny-line" />
+          <div className="section-heading create-heading">
+            <h2>Create new</h2>
+          </div>
+          <div className="presets">
+            {(["Tabata", "Rounds"] as const).map((name, i) => (
+              <button
+                className={`preset-card preset-${i}`}
+                key={name}
+                onClick={() => openEditor(preset(name))}
+              >
+                <span className="preset-top">
+                  <span className="preset-symbol">
+                    {i === 0 ? <Zap size={27} /> : <Repeat2 size={27} />}
+                  </span>
+                  <ArrowRight size={23} />
+                </span>
+                <span className="preset-name">{name}</span>
+                <span className="preset-meta">
+                  {i === 0 ? "10 repeats" : "1 round"}
+                  <span>·</span>
+                  {formatTime(totalDuration(preset(name)))}
+                </span>
+                <span className="preset-bars">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              </button>
+            ))}
           </div>
         </main>
       ) : page === "timer" && session ? (
@@ -1267,7 +1247,6 @@ export default function App() {
         <main className="settings page">
           <div className="page-heading">
             <div>
-              <span className="eyebrow">MAKE IT YOURS</span>
               <h1>
                 Settings<span className="accent">.</span>
               </h1>
@@ -1422,10 +1401,6 @@ export default function App() {
                 ))}
             </div>
           </section>
-          <div className="settings-footer">
-            <span className="brand small">tempo.</span>
-            <span>LOCAL STORAGE · V1.0</span>
-          </div>
         </main>
       ) : (
         <main className="page empty-state">
