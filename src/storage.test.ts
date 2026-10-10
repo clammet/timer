@@ -5,6 +5,7 @@ import { emptyStore, isTimer, parseStore } from "./storage.ts";
 
 test("timers, custom audio, settings and active session round-trip", () => {
   const timer = preset("Tabata");
+  timer.rounds[1].intervals[0].transition = "loud-beep";
   const store = {
     ...emptyStore(),
     timers: [timer],

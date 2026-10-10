@@ -79,6 +79,7 @@ const icons = {
 const soundLabels = {
   none: "None",
   beeps: "Beeps",
+  "loud-beep": "Loud Beep",
   bell: "Bell",
   chime: "Chime",
   rise: "Rise",
@@ -1079,7 +1080,7 @@ export default function App() {
                 </span>
                 <span className="preset-name">{name}</span>
                 <span className="preset-meta">
-                  {i === 0 ? "10 repeats" : "1 round"}
+                  {i === 0 ? "10 repeats" : "1 repeat"}
                   <span>·</span>
                   {formatTime(totalDuration(preset(name)))}
                 </span>

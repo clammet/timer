@@ -14,6 +14,7 @@ export type IconName = (typeof iconNames)[number];
 export const transitions = [
   "none",
   "beeps",
+  "loud-beep",
   "bell",
   "chime",
   "rise",
@@ -78,16 +79,21 @@ export function preset(kind: "Tabata" | "Rounds" | "Custom"): Timer {
     id: uid(),
     name: kind === "Custom" ? "New timer" : kind,
     cycles: 1,
-    rounds: [
-      {
-        id: uid(),
-        name: "Round 1",
-        repeat: kind === "Tabata" ? 10 : 1,
-        intervals:
-          kind === "Custom"
-            ? [interval()]
-            : [
-                interval("Prepare", 10, colors[1], "wind"),
+    rounds:
+      kind === "Custom"
+        ? [{ id: uid(), name: "Round 1", repeat: 1, intervals: [interval()] }]
+        : [
+            {
+              id: uid(),
+              name: "Prepare",
+              repeat: 1,
+              intervals: [interval("Prepare", 10, colors[1], "wind")],
+            },
+            {
+              id: uid(),
+              name: "Round 1",
+              repeat: kind === "Tabata" ? 10 : 1,
+              intervals: [
                 interval("Work", kind === "Tabata" ? 20 : 10),
                 interval(
                   "Rest",
@@ -96,8 +102,8 @@ export function preset(kind: "Tabata" | "Rounds" | "Custom"): Timer {
                   "coffee",
                 ),
               ],
-      },
-    ],
+            },
+          ],
   };
 }
 export const roundDuration = (round: Round) =>

@@ -3,6 +3,7 @@ import type { Settings, Sound } from "./storage";
 const transitionLengths: Record<Transition, number> = {
   none: 0,
   beeps: 2.45,
+  "loud-beep": 2.9,
   bell: 1.2,
   chime: 1.06,
   rise: 0.6,
@@ -82,8 +83,13 @@ export class TimerAudio {
         endFrequency,
       );
     };
-    if (sound === "beeps")
-      [0, 1.15, 2.3].forEach((delay) => play(880, delay, 0.15));
+    if (sound === "beeps" || sound === "loud-beep") {
+      const duration = sound === "loud-beep" ? 0.3 : 0.15;
+      const volume = sound === "loud-beep" ? v * 3 : v;
+      [0, 1, 2].forEach((index) =>
+        play(880, index * (duration + 1), duration, volume),
+      );
+    }
     if (sound === "bell") {
       play(660, 0, 1.2);
       play(1320, 0, 0.6, v * 0.4);

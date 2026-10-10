@@ -5,7 +5,13 @@ import { transitions } from "./engine.ts";
 
 const settings = { volume: 1, muted: false, keepAwake: false };
 function setup() {
-  const tones: { start?: number; stop?: number; cancelled?: boolean }[] = [];
+  const tones: {
+    start?: number;
+    stop?: number;
+    cancelled?: boolean;
+    peak?: number;
+    frequency?: number;
+  }[] = [];
   class FakeContext {
     currentTime = 10;
     destination = {};
@@ -16,7 +22,12 @@ function setup() {
       const record: (typeof tones)[number] = {};
       tones.push(record);
       return {
-        frequency: { setValueAtTime() {}, exponentialRampToValueAtTime() {} },
+        frequency: {
+          setValueAtTime(value: number) {
+            record.frequency = value;
+          },
+          exponentialRampToValueAtTime() {},
+        },
         connect(target: unknown) {
           return target;
         },
@@ -31,10 +42,13 @@ function setup() {
       };
     }
     createGain() {
+      const record = tones[tones.length - 1];
       return {
         gain: {
           setValueAtTime() {},
-          linearRampToValueAtTime() {},
+          linearRampToValueAtTime(value: number) {
+            record.peak = value;
+          },
           exponentialRampToValueAtTime() {},
         },
         connect() {},
@@ -111,4 +125,37 @@ test("previews do not cancel the running timer's pending transition", () => {
   audio.stopPreview();
   assert.ok(tones.slice(3).every((tone) => tone.cancelled));
   assert.ok(tones.slice(0, 3).every((tone) => !tone.cancelled));
+});
+
+test("Loud Beep doubles each tone duration and triples gain at the same volume", () => {
+  const { audio, tones } = setup();
+  const volume = { ...settings, volume: 0.5 };
+  audio.transition("beeps", volume);
+  audio.transition("loud-beep", volume);
+  const original = tones.slice(0, 3);
+  const loud = tones.slice(3);
+  assert.equal(loud.length, 3);
+  for (let i = 0; i < 3; i++) {
+    close(loud[i].stop! - loud[i].start!, 0.3);
+    close(
+      loud[i].stop! - loud[i].start!,
+      2 * (original[i].stop! - original[i].start!),
+    );
+    close(loud[i].peak!, 3 * original[i].peak!);
+    assert.equal(loud[i].frequency, original[i].frequency);
+  }
+  close(loud[1].start! - loud[0].stop!, 1);
+  close(loud[2].start! - loud[1].stop!, 1);
+  audio.transition("loud-beep", { ...volume, muted: true });
+  audio.transition("loud-beep", { ...volume, volume: 0 });
+  assert.equal(tones.length, 6);
+});
+test("Loud Beep finishes in the preceding interval despite its longer tones", () => {
+  const { audio, tones } = setup();
+  audio.transition("loud-beep", settings, 10000);
+  assert.equal(tones.length, 3);
+  close(tones[0].start!, 17.1);
+  close(tones[1].start!, 18.4);
+  close(tones[2].start!, 19.7);
+  close(tones[2].stop!, 20);
 });
