@@ -966,6 +966,12 @@ legend {
   margin-top: 20px;
 }
 
+.round-progress {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
 .current-heading {
   display: flex;
   align-items: center;
@@ -1040,10 +1046,13 @@ legend {
   align-items: center;
   justify-content: center;
   gap: 24px;
-  padding: 2px 0 25px;
+  padding: 20px 0 0;
 }
 .player-controls > .icon-button {
-  color: #c5d0bd;
+  color: inherit;
+}
+.player-controls > .icon-button:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
 }
 .play-toggle {
   width: 78px;
@@ -1401,7 +1410,6 @@ legend {
   }
   .player-controls {
     gap: 16px;
-    padding-bottom: 20px;
   }
   .play-toggle {
     width: 73px;

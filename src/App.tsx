@@ -1136,6 +1136,13 @@ export default function App() {
             aria-label="Current interval"
             style={intervalPanelStyle(current?.interval.color ?? colors[2])}
           >
+            {current && (
+              <div className="round-progress">
+                Round {current.repeat}/{current.round.repeat}
+                {session.timer.cycles - current.cycle + 1 > 1 &&
+                  ` (x${session.timer.cycles - current.cycle + 1})`}
+              </div>
+            )}
             <div className="current-heading">
               <span className="current-icon">
                 {current ? (
@@ -1155,6 +1162,58 @@ export default function App() {
               aria-label="Interval remaining"
             >
               {formatTime(current?.remaining ?? 0)}
+            </div>
+            <div className="player-controls">
+              <IconButton
+                label="Restart timer"
+                onClick={() =>
+                  setConfirmation({ label: "Restart timer?", action: restart })
+                }
+              >
+                <RotateCcw size={25} />
+              </IconButton>
+              <button
+                className="play-toggle"
+                aria-label={
+                  complete
+                    ? "Replay timer"
+                    : running
+                      ? "Pause timer"
+                      : "Resume timer"
+                }
+                onClick={toggleRunning}
+              >
+                {complete ? (
+                  <RotateCcw size={32} />
+                ) : running ? (
+                  <Pause size={32} fill="currentColor" />
+                ) : (
+                  <Play size={32} fill="currentColor" />
+                )}
+              </button>
+              <IconButton
+                label="Next interval"
+                disabled={!current}
+                onClick={skip}
+              >
+                <SkipForward size={25} />
+              </IconButton>
+              <IconButton
+                label="Stop timer"
+                onClick={() =>
+                  setConfirmation({
+                    label: "Stop timer?",
+                    action: () => {
+                      if (update({ session: null })) {
+                        audio.stop();
+                        setPage("home");
+                      }
+                    },
+                  })
+                }
+              >
+                <Square size={23} />
+              </IconButton>
             </div>
           </section>
           <section
@@ -1185,58 +1244,6 @@ export default function App() {
               </div>
             )}
           </section>
-          <div className="player-controls">
-            <IconButton
-              label="Restart timer"
-              onClick={() =>
-                setConfirmation({ label: "Restart timer?", action: restart })
-              }
-            >
-              <RotateCcw size={25} />
-            </IconButton>
-            <button
-              className="play-toggle"
-              aria-label={
-                complete
-                  ? "Replay timer"
-                  : running
-                    ? "Pause timer"
-                    : "Resume timer"
-              }
-              onClick={toggleRunning}
-            >
-              {complete ? (
-                <RotateCcw size={32} />
-              ) : running ? (
-                <Pause size={32} fill="currentColor" />
-              ) : (
-                <Play size={32} fill="currentColor" />
-              )}
-            </button>
-            <IconButton
-              label="Next interval"
-              disabled={!current}
-              onClick={skip}
-            >
-              <SkipForward size={25} />
-            </IconButton>
-            <IconButton
-              label="Stop timer"
-              onClick={() =>
-                setConfirmation({
-                  label: "Stop timer?",
-                  action: () => {
-                    if (update({ session: null })) {
-                      audio.stop();
-                      setPage("home");
-                    }
-                  },
-                })
-              }
-            >
-              <Square size={23} />
-            </IconButton>
-          </div>
         </main>
       ) : page === "settings" ? (
         <main className="settings page">
