@@ -1416,29 +1416,35 @@ export default function App() {
       <nav className="bottom-nav" aria-label="Main navigation">
         <button
           className={page === "home" && !editor ? "active" : ""}
+          aria-label="Home"
+          title="Home"
           onClick={() => navigate("home")}
         >
           <Home size={23} />
-          <span>Home</span>
+          <span className="nav-label">Home</span>
         </button>
         {session && (
           <button
             className={page === "timer" && !editor ? "active" : ""}
+            aria-label={session.timer.name}
+            title={session.timer.name}
             onClick={() => navigate("timer")}
           >
             <span className="nav-timer-icon">
               <TimerIcon size={23} />
               {running && <i />}
             </span>
-            <span className="nav-timer-name">{session.timer.name}</span>
+            <span className="nav-label nav-timer-name">{session.timer.name}</span>
           </button>
         )}
         <button
           className={page === "settings" && !editor ? "active" : ""}
+          aria-label="Settings"
+          title="Settings"
           onClick={() => navigate("settings")}
         >
           <Settings2 size={23} />
-          <span>Settings</span>
+          <span className="nav-label">Settings</span>
         </button>
       </nav>
       {notice && (

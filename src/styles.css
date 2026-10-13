@@ -1527,6 +1527,141 @@ legend {
 .player-app .toast {
   bottom: calc(205px + env(safe-area-inset-bottom));
 }
+/* Compact vertical spacing independently of the viewport width. */
+@media (max-height: 700px) {
+  .app {
+    padding-bottom: calc(69px + env(safe-area-inset-bottom));
+  }
+  .bottom-nav {
+    padding-block: 4px calc(4px + env(safe-area-inset-bottom));
+  }
+  .bottom-nav > button {
+    min-height: 44px;
+    padding-block: 6px;
+    gap: 0;
+  }
+  .bottom-nav .nav-label {
+    display: none;
+  }
+  .brand-header {
+    height: 64px;
+    margin-bottom: 16px;
+  }
+  .page-heading {
+    margin-bottom: 16px;
+  }
+  .home-heading {
+    margin-top: 0;
+  }
+  .section-heading {
+    margin-bottom: 12px;
+  }
+  .presets,
+  .saved-timers {
+    row-gap: 12px;
+  }
+  .preset-card {
+    min-height: 0;
+    padding-block: 16px;
+  }
+  .preset-top,
+  .saved-card-top {
+    margin-bottom: 12px;
+  }
+  .create-heading {
+    margin-top: 20px;
+  }
+  .saved-card {
+    padding-block: 16px;
+  }
+  .card-bottom {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+  .empty-state {
+    min-height: 0;
+    padding-block: 16px;
+    gap: 10px;
+  }
+  .editor .surface,
+  .settings-panel {
+    margin-bottom: 12px;
+  }
+  .timer-details,
+  .round,
+  .settings-panel,
+  .interval-fields {
+    padding-block: 14px;
+  }
+  .timer-details,
+  .interval-fields,
+  .sound-fields {
+    row-gap: 12px;
+  }
+  .repeat-line {
+    margin-block: 10px;
+  }
+  .interval-summary {
+    min-height: 60px;
+    padding-block: 8px;
+  }
+  .setting-row,
+  .sound-row {
+    min-height: 56px;
+  }
+  .volume-field {
+    gap: 8px;
+    padding-bottom: 12px;
+  }
+  .sound-list,
+  .transition-list {
+    margin-top: 12px;
+  }
+  .sounds-empty {
+    padding-block: 16px 8px;
+    gap: 10px;
+  }
+  .player-app {
+    padding-bottom: calc(53px + env(safe-area-inset-bottom));
+  }
+  .player {
+    min-height: calc(100dvh - 53px - env(safe-area-inset-bottom));
+  }
+  .player-header {
+    padding-block: 8px;
+  }
+  .player-timer-name {
+    margin-bottom: 3px;
+  }
+  .current-interval {
+    min-height: 0;
+    margin-top: 8px;
+    padding-block: 10px;
+  }
+  .round-progress {
+    margin-bottom: 8px;
+  }
+  .countdown {
+    line-height: 1.1;
+    margin-block: 4px;
+  }
+  .player-controls {
+    padding-top: 8px;
+  }
+  .play-toggle {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+  }
+  .next-interval {
+    padding-block: 8px;
+    margin-bottom: 8px;
+  }
+  .toast,
+  .player-app .toast {
+    bottom: calc(65px + env(safe-area-inset-bottom));
+  }
+}
 @media (max-width: 360px) {
   .home h1 {
     font-size: 30px;
